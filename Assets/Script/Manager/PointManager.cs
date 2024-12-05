@@ -5,8 +5,8 @@ using TMPro;
 public class PointManager : MonoBehaviour
 {
     [SerializeField] GameObject PointPrefab;
-    [SerializeField] float pointTime = 1.0f;
-    public void showPointText(float Point, Vector2 position)
+    [SerializeField] float PointTime = 1.0f;
+    public void ShowPointText(float Point, Vector2 position)
     {
         GameObject pointObj = Instantiate(PointPrefab, position, Quaternion.identity, this.transform);
         GameObject pointTextObj = pointObj.transform.GetChild(0).gameObject;
@@ -16,12 +16,13 @@ public class PointManager : MonoBehaviour
 
         Animation anim = pointTextObj.GetComponent<Animation>();
         anim.Play();
-        
+
         StartCoroutine(PointDestroyRoutine(pointObj));
     }
 
-    public IEnumerator PointDestroyRoutine(GameObject pointObj){
-        yield return new WaitForSeconds(pointTime);
+    public IEnumerator PointDestroyRoutine(GameObject pointObj)
+    {
+        yield return new WaitForSeconds(PointTime);
         Destroy(pointObj);
     }
 

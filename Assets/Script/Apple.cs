@@ -28,13 +28,13 @@ public class Apple : MonoBehaviour
     {
         animator.SetBool("selected", true);
         appleAudio.playSound("SELECTED");
-        appleManager.selectedApples.Add(gameObject.GetComponent<Apple>());
+        appleManager.SelectedApples.Add(gameObject.GetComponent<Apple>());
     }
 
     public void Unselect()
     {
         animator?.SetBool("selected", false);
-        appleManager.selectedApples.Remove(gameObject.GetComponent<Apple>());
+        appleManager.SelectedApples.Remove(gameObject.GetComponent<Apple>());
     }
 
     public void BoxingOut()

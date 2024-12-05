@@ -5,26 +5,22 @@ using TMPro;
 public class ComboManager : MonoBehaviour
 {
     [SerializeField] GameObject ComboPrefab;
-    [SerializeField] GameObject comboParent;
-    [SerializeField] public int combo;
-    float baseComboTime;
+    [SerializeField] GameObject ComboParent;
+    public int Combo;
+    float _baseComboTime;
 
     [Tooltip("Choose setting")]
-    public GameConfig _settings;
-    GameConfig s;
+    public GameConfig GameSettings;
 
-    void Start(){
-        s=_settings;
-    }
-    public void showComboText(int comboCount)
+    public void ShowComboText(int comboCount)
     {
 
-        GameObject comboObj = Instantiate(ComboPrefab, Vector2.zero, comboParent.transform.rotation, comboParent.transform);
-        
+        GameObject comboObj = Instantiate(ComboPrefab, Vector2.zero, ComboParent.transform.rotation, ComboParent.transform);
+
         RectTransform comboObjRect = comboObj.GetComponent<RectTransform>();
         Animation anim = comboObjRect.GetComponent<Animation>();
         anim.Play();
-   
+
         TextMeshProUGUI comboText = comboObj.GetComponent<TextMeshProUGUI>();
         comboText.text = comboCount + " Combo!";
 
@@ -33,27 +29,27 @@ public class ComboManager : MonoBehaviour
     }
     public IEnumerator ComboCountDownRoutine()
     {
-        yield return new WaitForSeconds(s.comboTime);
-        combo = 0;
+        yield return new WaitForSeconds(GameSettings.comboTime);
+        Combo = 0;
     }
 
     public IEnumerator ComboDestroyRoutine(GameObject comboObj)
     {
-        yield return new WaitForSeconds(s.comboTime);
+        yield return new WaitForSeconds(GameSettings.comboTime);
         Destroy(comboObj);
     }
 
     public void CalBaseComboTime(int leftApples)
     {
-        baseComboTime = s.baseMaxComboTime/(leftApples+1);
+        _baseComboTime = GameSettings.baseMaxComboTime / (leftApples + 1);
     }
 
-    public float comboAddTime ()
+    public float comboAddTime()
     {
-        float addTime = baseComboTime + combo * s.plusComboTime;
-        if(addTime>=s.maxComboTime)
+        float addTime = _baseComboTime + Combo * GameSettings.plusComboTime;
+        if (addTime >= GameSettings.maxComboTime)
         {
-            addTime = s.maxComboTime;
+            addTime = GameSettings.maxComboTime;
         }
         return addTime;
     }

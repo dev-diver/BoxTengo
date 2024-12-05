@@ -10,8 +10,8 @@ public class DrawSelection : MonoBehaviour
     private List<Vector2> colliderPoints = new List<Vector2>(4);
     private PolygonCollider2D colliderShape;
     private List<Collider2D> beforeCollider;
-    public GameManager gameManager;
-    public AppleManager appleManager;
+    public GameManager GameManagerInstance;
+    public AppleManager AppleManagerInstance;
 
     private void OnEnable()
     {
@@ -77,7 +77,7 @@ public class DrawSelection : MonoBehaviour
             if (theTouch.phase == TouchPhase.Ended)
             {
                 touchEndPosition = Camera.main.ScreenToWorldPoint(theTouch.position);
-                appleManager.BoxingApple();
+                AppleManagerInstance.BoxingApple();
                 EraseRectangle();
 
             }
@@ -114,7 +114,7 @@ public class DrawSelection : MonoBehaviour
         lineRend.positionCount = 0;
         colliderPoints.Clear();
         ApplyCollider();
-        appleManager.ClearSelected();
+        AppleManagerInstance.ClearSelected();
     }
 
     private void CheckOverlap()
@@ -138,7 +138,7 @@ public class DrawSelection : MonoBehaviour
         }
 
         // 제거 경우
-        var unselectedApples = appleManager.selectedApples
+        var unselectedApples = AppleManagerInstance.SelectedApples
             .Where(selected => !collidingAppleSet.Contains(selected))
             .ToList();
 
@@ -150,7 +150,7 @@ public class DrawSelection : MonoBehaviour
         // 추가 경우
         foreach (var colliding in collidingAppleSet)
         {
-            if (!appleManager.selectedApples.Contains(colliding))
+            if (!AppleManagerInstance.SelectedApples.Contains(colliding))
             {
                 colliding.Select();
             }

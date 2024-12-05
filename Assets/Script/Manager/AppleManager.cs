@@ -5,14 +5,13 @@ using UnityEngine;
 public class AppleManager : MonoBehaviour
 {
     public List<Apple> Apples = new List<Apple>();
-    public List<Sprite> appleSprite = new List<Sprite>();
-    public GameObject applePrefab;
+    public List<Sprite> AppleSprite = new List<Sprite>();
+    public GameObject ApplePrefab;
 
-    public HashSet<Apple> selectedApples = new HashSet<Apple>();
+    public HashSet<Apple> SelectedApples = new HashSet<Apple>();
     [SerializeField] GameManager gameManager;
     [SerializeField] ComboManager comboManager;
 
-    public float appleScale = 0.9f;
     public int AppleGridSize = 7;
     private int _leftApples = 0;
 
@@ -52,13 +51,13 @@ public class AppleManager : MonoBehaviour
             for (int j = 0; j < AppleGridSize; j++)
             {
                 //number 추후에 합 10이 되게
-                GameObject apple = Instantiate(applePrefab, Vector3.zero, Quaternion.identity, transform);
+                GameObject apple = Instantiate(ApplePrefab, Vector3.zero, Quaternion.identity, transform);
                 Apple comp = apple.GetComponent<Apple>();
                 comp.coord = new Vector2(i, j);
                 comp.number = appleNumbers[k];
                 k++;
                 // Apple로 넘기기
-                apple.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = appleSprite[comp.number - 1];
+                apple.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = AppleSprite[comp.number - 1];
                 Apples.Add(comp);
             }
         }
@@ -68,7 +67,7 @@ public class AppleManager : MonoBehaviour
     public void ClearSelected()
     {
 
-        var unselectedApples = selectedApples.ToList();
+        var unselectedApples = SelectedApples.ToList();
 
         foreach (var apple in unselectedApples)
         {
@@ -120,7 +119,7 @@ public class AppleManager : MonoBehaviour
             if (Apples[i] != null)
             {
                 Apples[i].number = numbers[k];
-                Apples[i].transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = appleSprite[numbers[k] - 1];
+                Apples[i].transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = AppleSprite[numbers[k] - 1];
                 k++;
             }
         }
@@ -138,18 +137,18 @@ public class AppleManager : MonoBehaviour
 
     public void BoxingApple()
     {
-        float appleSum = CalSelect(selectedApples);
+        float appleSum = CalSelect(SelectedApples);
         if (appleSum == 10 || appleSum == 20)
         {
-            foreach (var apple in selectedApples)
+            foreach (var apple in SelectedApples)
             {
                 apple?.BoxingOut();
             }
 
-            _leftApples -= selectedApples.Count;
+            _leftApples -= SelectedApples.Count;
             Debug.Log($"남은 사과 : {_leftApples}");
             comboManager.CalBaseComboTime(_leftApples);
-            gameManager.CalScore(selectedApples);
+            gameManager.CalScore(SelectedApples);
 
             if (_leftApples == 0)
             {

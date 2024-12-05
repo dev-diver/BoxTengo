@@ -5,7 +5,6 @@ using System.Linq;
 
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
 
 public class GameManager : MonoBehaviour
 {
@@ -91,15 +90,13 @@ public class GameManager : MonoBehaviour
     public bool bonusMode = false;
 
     [Tooltip("Choose setting")]
-    public GameConfig _settings;
-    GameConfig s;
+    [SerializeField] GameConfig GameSettings;
     void Start()
     {
-        s = _settings;
         if (DebugManager.Instance.debugMode == true)
         {
             bonusMode = true;
-            s.totalTime = 5.0f;
+            GameSettings.totalTime = 5.0f;
         }
     }
     public void CalScore(HashSet<Apple> selectedApples)
@@ -109,10 +106,10 @@ public class GameManager : MonoBehaviour
         float addTime = comboManager.comboAddTime();
         Debug.Log("Combo add Time: " + addTime);
         addLastTime(addTime);
-        if (comboManager.combo >= 1)
+        if (comboManager.Combo >= 1)
         {
-            comboManager.showComboText(comboManager.combo);
-            Debug.Log(comboManager.combo + "Combo!!");
+            comboManager.ShowComboText(comboManager.Combo);
+            Debug.Log(comboManager.Combo + "Combo!!");
             if (comboCount != null)
             {
                 StopCoroutine(comboCount);
@@ -141,7 +138,7 @@ public class GameManager : MonoBehaviour
 
         //20 이 10보다 더 많음
         float distance = (maxX - minX + 1) * (maxY - minY + 1);
-        float point = (comboManager.combo + 2) * distance * selectedApples.Count;
+        float point = (comboManager.Combo + 2) * distance * selectedApples.Count;
 
         if (selectedApples.Count > 0)
         {
@@ -152,7 +149,7 @@ public class GameManager : MonoBehaviour
             }
         }
 
-        comboManager.combo += 1;
+        comboManager.Combo += 1;
         comboCount = StartCoroutine(comboManager.ComboCountDownRoutine());
     }
 
@@ -172,7 +169,7 @@ public class GameManager : MonoBehaviour
 
     void addPointToScore(float point, Vector3 position)
     {
-        pointManager.showPointText(point, position);
+        pointManager.ShowPointText(point, position);
         score += point;
         //Score Text Animation 추가
     }
@@ -197,7 +194,7 @@ public class GameManager : MonoBehaviour
         preCountDownScreen.turnOff();
         BGMManager.Instance.BGMChange("GAME");
         SFXManager.Instance.PlaySound("GAMESTART");
-        countdown = StartCoroutine(InGameCountDownRoutine(s.totalTime));
+        countdown = StartCoroutine(InGameCountDownRoutine(GameSettings.totalTime));
         yield break;
     }
     IEnumerator InGameCountDownRoutine(float time)
@@ -251,13 +248,13 @@ public class GameManager : MonoBehaviour
         GamePause?.Invoke();
         resetGame();
         newBlocks();
-        gameStartCo = StartCoroutine(preCountDown(s.totalTime));
+        gameStartCo = StartCoroutine(preCountDown(GameSettings.totalTime));
     }
     public void resetGame()
     {
         stopInGameCountDown();
         stopPreCountDown();
-        comboManager.combo = 0;
+        comboManager.Combo = 0;
         lastTime = 0;
         resur = 0;
         stage = 0;
@@ -274,9 +271,9 @@ public class GameManager : MonoBehaviour
     public void nextStage()
     {
         stage++;
-        addPointToScore(stage * s.allClearPoint, Vector3.zero);
-        float addTime = s.secondTime - stage * s.subRetryTime;
-        addLastTime(addTime >= s.minRetryTime ? addTime : s.minRetryTime);
+        addPointToScore(stage * GameSettings.allClearPoint, Vector3.zero);
+        float addTime = GameSettings.secondTime - stage * GameSettings.subRetryTime;
+        addLastTime(addTime >= GameSettings.minRetryTime ? addTime : GameSettings.minRetryTime);
         newBlocks();
         clearManager.showClearText();
     }
@@ -285,7 +282,7 @@ public class GameManager : MonoBehaviour
         SFXManager.Instance.PlaySound("GAMECONTINUE");
         resur += 1;
         RewardManager.Instance.addCoin(-1);
-        gameStartCo = StartCoroutine(preCountDown(s.retryTime));
+        gameStartCo = StartCoroutine(preCountDown(GameSettings.retryTime));
     }
 
     void continueOrEnd()
