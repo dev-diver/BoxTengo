@@ -1,44 +1,10 @@
-# Include only the Scripts folder
-# Ignore everything
-*
+# 모든 파일 무시
+/*
 
-# Include Git-related files
 !.gitignore
+!.gitattributes
+# Assets/Script 폴더는 제외
+!/Assets/Script/
 
-# But include the Assets folder and its Scripts subfolder
-!Assets/
-!Assets/**/*.cs
-
-# Exclude other subfolders in Assets except Scripts
-Assets/*
-!Assets/Scripts/
-
-# Unity generated files (exclude)
-[Ll]ibrary/
-[Tt]emp/
-[Oo]bj/
-[Bb]uild/
-[Bb]uilds/
-[Ll]ogs/
-[Mm]emoryCaptures/
-
-# IDE specific files
-*.csproj
-*.unityproj
-*.sln
-*.suo
-*.tmp
-*.user
-*.userprefs
-*.pidb
-*.booproj
-*.svd
-
-# Exclude platform-specific or temporary files
-.DS_Store
-Thumbs.db
-Desktop.ini
-*.log
-*.bak
-*.swp
-*.lock
+# .cs 파일은 제외
+!/Assets/Script/**/*.cs
