@@ -1,27 +1,30 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class AppleManager : MonoBehaviour
 {
-    public List<Apple> apples = new List<Apple>();
+    public List<Apple> Apples = new List<Apple>();
     public List<Sprite> appleSprite = new List<Sprite>();
     public GameObject applePrefab;
-    public List<Apple> selectedApples = new List<Apple>();
+
+    public HashSet<Apple> selectedApples = new HashSet<Apple>();
     [SerializeField] GameManager gameManager;
     [SerializeField] ComboManager comboManager;
 
     public float appleScale = 0.9f;
-    public int appleAmount = 7;
+    public int AppleGridSize = 7;
+    private int _leftApples = 0;
 
-    public void createApples()
+    public void CreateApples()
     {
-        apples = new List<Apple>();
+        Apples = new List<Apple>();
         //총 갯수가 appleAmount^2 이면서 sum이 10인 배열 랜덤으로 찾기
 
         int[] appleNumbers;
-        if(!gameManager.bonusMode)
+        if (!gameManager.bonusMode)
         {
-            appleNumbers = new int[] { 1, 1, 1, 1, 1, 1, 1, 1, 
+            appleNumbers = new int[] { 1, 1, 1, 1, 1, 1, 1, 1,
                                          2, 2, 2, 2, 2, 2, 2, 2,
                                          3, 3, 3, 3, 3, 3, 3,
                                          4, 4, 4, 4, 4, 4, 4,
@@ -40,55 +43,61 @@ public class AppleManager : MonoBehaviour
                                         5,5,5,5,5,5,5,
                                         5,5,5,5,5,5,5,
                                         5,5,5,5,2,3,5,
-                                    }; 
+                                    };
         }
 
         int k = 0;
-        for(int i=0;i<appleAmount;i++)
+        for (int i = 0; i < AppleGridSize; i++)
         {
-            for(int j=0; j<appleAmount;j++)
+            for (int j = 0; j < AppleGridSize; j++)
             {
                 //number 추후에 합 10이 되게
                 GameObject apple = Instantiate(applePrefab, Vector3.zero, Quaternion.identity, transform);
                 Apple comp = apple.GetComponent<Apple>();
-                comp.coord = new Vector2(i,j);
+                comp.coord = new Vector2(i, j);
                 comp.number = appleNumbers[k];
                 k++;
                 // Apple로 넘기기
-                apple.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = appleSprite[comp.number-1];
-                apples.Add(comp); 
+                apple.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = appleSprite[comp.number - 1];
+                Apples.Add(comp);
             }
         }
+        _leftApples = AppleGridSize * AppleGridSize;
     }
 
     public void ClearSelected()
     {
-        for(var i = selectedApples.Count-1; i>=0; i--)
+
+        var unselectedApples = selectedApples.ToList();
+
+        foreach (var apple in unselectedApples)
         {
-            selectedApples[i]?.Unselect();
+            apple?.Unselect();
         }
         //selectedApples.Clear();
     }
-    public void clearApples()
+
+    public void ClearApples()
     {
-        for(int i = 0; i < apples.Count;i++)
+        for (int i = 0; i < Apples.Count; i++)
         {
-            if(apples[i]!=null){ //?.으로 바꾸면 에러
-                Destroy(apples[i].gameObject);
+            if (Apples[i] != null)
+            { //?.으로 바꾸면 에러
+                Destroy(Apples[i].gameObject);
             }
         }
-        apples?.Clear();
+        Apples?.Clear();
     }
 
     public void ShuffleApples()
     {
         List<int> numbers = new List<int>();
-        foreach(var apple in apples)
+        foreach (var apple in Apples)
         {
-            if(apple!=null)
+            if (apple != null)
             {
                 numbers.Add(apple.number);
-            }            
+            }
         }
 
         var result = "";
@@ -97,8 +106,8 @@ public class AppleManager : MonoBehaviour
             result += item.ToString() + ", ";
         }
 
-        numbers.Sort((a, b)=> 1 - 2 * Random.Range(0, 2));
-        
+        numbers.Sort((a, b) => 1 - 2 * Random.Range(0, 2));
+
         result = "";
         foreach (var item in numbers)
         {
@@ -106,60 +115,47 @@ public class AppleManager : MonoBehaviour
         }
 
         int k = 0;
-        for(int i=0;i<apples.Count;i++)
+        for (int i = 0; i < Apples.Count; i++)
         {
-            if(apples[i]!=null)
+            if (Apples[i] != null)
             {
-                apples[i].number = numbers[k];
-                apples[i].transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = appleSprite[numbers[k]-1];
+                Apples[i].number = numbers[k];
+                Apples[i].transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = appleSprite[numbers[k] - 1];
                 k++;
             }
         }
     }
 
-    private int CalSelect(List<Apple> Apples)
+    private int CalSelect(HashSet<Apple> Apples)
     {
         int sum = 0;
-        foreach(var apple in Apples)
+        foreach (var apple in Apples)
         {
-            sum+=apple.number;
+            sum += apple.number;
         }
         return sum;
-    }
-
-    private void AISelect()
-    {
-        
     }
 
     public void BoxingApple()
     {
         float appleSum = CalSelect(selectedApples);
-        if(appleSum == 10 || appleSum == 20)
+        if (appleSum == 10 || appleSum == 20)
         {
-            foreach(var apple in selectedApples)
+            foreach (var apple in selectedApples)
             {
                 apple?.BoxingOut();
             }
-            int leftAppleAmount = leftApples();
-            comboManager.CalBaseComboTime(leftAppleAmount);
+
+            _leftApples -= selectedApples.Count;
+            Debug.Log($"남은 사과 : {_leftApples}");
+            comboManager.CalBaseComboTime(_leftApples);
             gameManager.CalScore(selectedApples);
-            if(leftAppleAmount==0){
+
+            if (_leftApples == 0)
+            {
                 gameManager.nextStage();
             }
         }
-    }
-    public int leftApples()
-    {
-        
-        int appleAmount = 0;
-        for(int i=0; i<apples.Count; i++)
-        {
-            if(apples[i]!=null){
-                appleAmount++;
-            }
-        }
-        return appleAmount;
     }
 
 }

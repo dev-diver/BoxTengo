@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -19,8 +21,6 @@ public class GameManager : MonoBehaviour
     public static event Action GamePause; //일시 정지
     public static event Action GameOver; //완전 끝남
 
-    
-
     [Header("Button")]
 
     [SerializeField] Button restartButton;
@@ -33,12 +33,12 @@ public class GameManager : MonoBehaviour
     [SerializeField] GameObject PopupAskContinue;
 
     float _score;
-    float score 
+    float score
     {
-        
-        get{ return _score;}
+
+        get { return _score; }
         set
-        { 
+        {
             _score = value;
             scoreChange(_score);
         }
@@ -48,8 +48,8 @@ public class GameManager : MonoBehaviour
     float bestScore
     {
         get
-        { 
-            _bestScore = PlayerPrefs.GetFloat("BestScore",0.0f);
+        {
+            _bestScore = PlayerPrefs.GetFloat("BestScore", 0.0f);
             return _bestScore;
         }
         set
@@ -62,12 +62,14 @@ public class GameManager : MonoBehaviour
     float _lastTime;
     float lastTime
     {
-        get{
+        get
+        {
             return _lastTime;
         }
-        set{
+        set
+        {
             _lastTime = value;
-            timeChange(_lastTime);    
+            timeChange(_lastTime);
         }
     }
 
@@ -78,7 +80,7 @@ public class GameManager : MonoBehaviour
     private Coroutine comboCount;
     private Coroutine gameStartCo;
     private Coroutine gameoverCo;
-    
+
     [Header("Objects")]
     public DrawSelection drawSelection;
     public AppleManager appleManager;
@@ -87,69 +89,76 @@ public class GameManager : MonoBehaviour
     public ClearManager clearManager;
 
     public bool bonusMode = false;
-    
+
     [Tooltip("Choose setting")]
     public GameConfig _settings;
     GameConfig s;
     void Start()
     {
         s = _settings;
-        if(DebugManager.Instance.debugMode==true)
+        if (DebugManager.Instance.debugMode == true)
         {
             bonusMode = true;
             s.totalTime = 5.0f;
         }
     }
-    public void CalScore(List<Apple> selectedApples)
+    public void CalScore(HashSet<Apple> selectedApples)
     {
         float minX = 7, minY = 7, maxX = 0, maxY = 0;
-        
+
         float addTime = comboManager.comboAddTime();
         Debug.Log("Combo add Time: " + addTime);
         addLastTime(addTime);
-        if(comboManager.combo>=1)
-        {   
+        if (comboManager.combo >= 1)
+        {
             comboManager.showComboText(comboManager.combo);
             Debug.Log(comboManager.combo + "Combo!!");
-            if(comboCount!=null)
+            if (comboCount != null)
             {
                 StopCoroutine(comboCount);
             }
         }
-        
-        foreach(var apple in selectedApples)
+
+        foreach (var apple in selectedApples)
         {
-            if(apple.coord.x <= minX)
+            if (apple.coord.x <= minX)
             {
                 minX = apple.coord.x;
             }
-            if(apple.coord.y <= minY)
+            if (apple.coord.y <= minY)
             {
                 minY = apple.coord.y;
             }
-            if(apple.coord.x >= maxX)
+            if (apple.coord.x >= maxX)
             {
                 maxX = apple.coord.x;
             }
-            if(apple.coord.y >= maxY)
+            if (apple.coord.y >= maxY)
             {
                 maxY = apple.coord.y;
             }
         }
 
         //20 이 10보다 더 많음
-        float distance = (maxX-minX+1) * (maxY-minY+1);
-        float point = (comboManager.combo+2)*distance*selectedApples.Count;
+        float distance = (maxX - minX + 1) * (maxY - minY + 1);
+        float point = (comboManager.combo + 2) * distance * selectedApples.Count;
 
-        addPointToScore(point, selectedApples[0].transform.position);
-        
-        comboManager.combo+=1;
+        if (selectedApples.Count > 0)
+        {
+            var firstApple = selectedApples.FirstOrDefault();
+            if (firstApple != null)
+            {
+                addPointToScore(point, firstApple.transform.position);
+            }
+        }
+
+        comboManager.combo += 1;
         comboCount = StartCoroutine(comboManager.ComboCountDownRoutine());
     }
 
     public void RecordScore()
     {
-        if(GPGSManager.Instance.isLogin())
+        if (GPGSManager.Instance.isLogin())
         {
             GPGSRankingManager.Instance.AddLeaderboard(bestScore);
         }
@@ -160,7 +169,7 @@ public class GameManager : MonoBehaviour
         RecordScore();
         GPGSRankingManager.Instance.ShowLeaderboardUI_Ranking();
     }
-    
+
     void addPointToScore(float point, Vector3 position)
     {
         pointManager.showPointText(point, position);
@@ -172,16 +181,17 @@ public class GameManager : MonoBehaviour
         lastTime += time;
         timeBonus?.Invoke();
     }
-    IEnumerator preCountDown(float time){
-        
+    IEnumerator preCountDown(float time)
+    {
+
         float CountDownTime = 3;
-        PreCount?.Invoke();        
+        PreCount?.Invoke();
         preCountDownScreen.turnOn();
-        while(CountDownTime > 0)
+        while (CountDownTime > 0)
         {
             preCountDownScreen.setTime(CountDownTime);
             SFXManager.Instance.PlaySound("PRECOUNT");
-            yield return new WaitForSeconds(0.5f);     
+            yield return new WaitForSeconds(0.5f);
             CountDownTime -= 1;
         }
         preCountDownScreen.turnOff();
@@ -194,7 +204,8 @@ public class GameManager : MonoBehaviour
     {
         GameStart?.Invoke();
         lastTime = time;
-        while(lastTime>0){
+        while (lastTime > 0)
+        {
             lastTime -= Time.deltaTime;
             yield return null;
         }
@@ -206,7 +217,7 @@ public class GameManager : MonoBehaviour
     {
         restartButton.interactable = false;
         yield return new WaitForSeconds(0.3f);
-        PopupAskContinue.SetActive(true); 
+        PopupAskContinue.SetActive(true);
         restartButton.interactable = true;
         AdManager.Instance.showEndGameAd();
     }
@@ -214,14 +225,15 @@ public class GameManager : MonoBehaviour
     public void coinGameStart()
     {
         AdManager.Instance.GameCount = 0;
-        PlayerPrefs.SetInt("GameCount",AdManager.Instance.GameCount); 
+        PlayerPrefs.SetInt("GameCount", AdManager.Instance.GameCount);
         RewardManager.Instance.addCoin(-1);
         newGame();
     }
 
     void stopPreCountDown()
     {
-        if(gameStartCo!=null){
+        if (gameStartCo != null)
+        {
             StopCoroutine(gameStartCo);
         }
         preCountDownScreen.turnOff();
@@ -229,7 +241,8 @@ public class GameManager : MonoBehaviour
 
     void stopInGameCountDown()
     {
-        if(countdown!=null){
+        if (countdown != null)
+        {
             StopCoroutine(countdown);
         }
     }
@@ -240,7 +253,8 @@ public class GameManager : MonoBehaviour
         newBlocks();
         gameStartCo = StartCoroutine(preCountDown(s.totalTime));
     }
-    public void resetGame(){
+    public void resetGame()
+    {
         stopInGameCountDown();
         stopPreCountDown();
         comboManager.combo = 0;
@@ -253,15 +267,15 @@ public class GameManager : MonoBehaviour
     public void newBlocks()
     {
         //appleReset
-        appleManager.clearApples();
-        appleManager.createApples();
+        appleManager.ClearApples();
+        appleManager.CreateApples();
         appleManager.ShuffleApples();
     }
     public void nextStage()
     {
         stage++;
-        addPointToScore(stage*s.allClearPoint, Vector3.zero);
-        float addTime = s.secondTime - stage*s.subRetryTime;
+        addPointToScore(stage * s.allClearPoint, Vector3.zero);
+        float addTime = s.secondTime - stage * s.subRetryTime;
         addLastTime(addTime >= s.minRetryTime ? addTime : s.minRetryTime);
         newBlocks();
         clearManager.showClearText();
@@ -269,22 +283,22 @@ public class GameManager : MonoBehaviour
     public void ContinueGame()
     {
         SFXManager.Instance.PlaySound("GAMECONTINUE");
-        resur+=1;
+        resur += 1;
         RewardManager.Instance.addCoin(-1);
         gameStartCo = StartCoroutine(preCountDown(s.retryTime));
-    }    
+    }
 
     void continueOrEnd()
-    {   
-        if(score>bestScore)
-        {   
+    {
+        if (score > bestScore)
+        {
             GamePause?.Invoke();
             newRecord();
         }
         else
         {
-            GameOver?.Invoke();            
-            if(resur<1)
+            GameOver?.Invoke();
+            if (resur < 1)
             {
                 gameoverCo = StartCoroutine(GameOverAdStandby());
             }
