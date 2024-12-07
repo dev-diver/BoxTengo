@@ -3,24 +3,34 @@ using UnityEngine;
 public class Apple : MonoBehaviour
 {
     public Vector2 coord;
-    public int number;
+    private int number;
+    public int Number
+    {
+        get { return number; } // getter
+        set
+        {
+            number = value;
+            transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = AppleManager.Instance.AppleSprite[value - 1];
+        } // setter
+    }
+
     private AppleManager appleManager;
     private Animator animator;
     private AppleSound appleAudio;
     void Start()
     {
         GameObject gameBoard = transform.parent.gameObject;
-        appleManager = gameBoard.GetComponent<AppleManager>();
+        int AppleGridSize = AppleManager.Instance.AppleGridSize;
         animator = transform.GetChild(0).GetComponent<Animator>();
         appleAudio = GetComponent<AppleSound>();
 
         float halfWidth = gameBoard.transform.localScale.x / 2;
         float halfHeight = gameBoard.transform.localScale.y / 2;
-        float appleScale = halfWidth / appleManager.AppleGridSize;
-        float localAppleScale = (float)1 / appleManager.AppleGridSize;
+        float appleScale = halfWidth / AppleGridSize;
+        float localAppleScale = (float)1 / AppleGridSize;
         //Debug.Log(halfWidth +", " +halfHeight);
-        transform.position = new Vector3(remap(coord.x, 0, appleManager.AppleGridSize - 1, -halfWidth + appleScale, halfWidth - appleScale),
-                                        remap(coord.y, 0, appleManager.AppleGridSize - 1, -halfHeight + appleScale, halfHeight - appleScale), 1);
+        transform.position = new Vector3(remap(coord.x, 0, AppleGridSize - 1, -halfWidth + appleScale, halfWidth - appleScale),
+                                        remap(coord.y, 0, AppleGridSize - 1, -halfHeight + appleScale, halfHeight - appleScale), 1);
         transform.localScale = new Vector2(localAppleScale, localAppleScale);
     }
     // Update is called once per frame

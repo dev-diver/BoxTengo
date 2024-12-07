@@ -82,7 +82,7 @@ public class GameManager : MonoBehaviour
 
     [Header("Objects")]
     public DrawSelection drawSelection;
-    public AppleManager appleManager;
+    private AppleManager appleManager;
     public ComboManager comboManager;
     public PointManager pointManager;
     public ClearManager clearManager;
@@ -93,6 +93,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] GameConfig GameSettings;
     void Start()
     {
+        appleManager = AppleManager.Instance;
         if (DebugManager.Instance.debugMode == true)
         {
             bonusMode = true;

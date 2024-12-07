@@ -12,7 +12,7 @@ public class DrawSelection : MonoBehaviour
     private PolygonCollider2D colliderShape;
     private List<Collider2D> beforeCollider;
     public GameManager GameManagerInstance;
-    public AppleManager AppleManagerInstance;
+    private AppleManager appleManager;
 
     private void OnEnable()
     {
@@ -30,8 +30,10 @@ public class DrawSelection : MonoBehaviour
 
     void Start()
     {
+        appleManager = AppleManager.Instance;
         Init();
         Disable();
+
     }
 
     private void Init()
@@ -78,7 +80,7 @@ public class DrawSelection : MonoBehaviour
             if (theTouch.phase == TouchPhase.Ended)
             {
                 touchEndPosition = Camera.main.ScreenToWorldPoint(theTouch.position);
-                AppleManagerInstance.BoxingApple();
+                appleManager.BoxingApple();
                 EraseRectangle();
 
             }
@@ -115,7 +117,7 @@ public class DrawSelection : MonoBehaviour
         lineRend.positionCount = 0;
         colliderPoints.Clear();
         ApplyCollider();
-        AppleManagerInstance.UnSelectAllApples();
+        appleManager.UnSelectAllApples();
     }
 
     private void CheckOverlap()
@@ -142,21 +144,21 @@ public class DrawSelection : MonoBehaviour
         }
 
         // 제거 경우
-        var unselectedApples = AppleManagerInstance.SelectedApples
+        var unselectedApples = appleManager.SelectedApples
             .Where(selected => !collidingAppleSet.Contains(selected))
             .ToList();
 
         foreach (var apple in unselectedApples)
         {
-            AppleManagerInstance.UnSelectApple(apple);
+            appleManager.UnSelectApple(apple);
         }
 
         // 추가 경우
         foreach (var colliding in collidingAppleSet)
         {
-            if (!AppleManagerInstance.SelectedApples.Contains(colliding))
+            if (!appleManager.SelectedApples.Contains(colliding))
             {
-                AppleManagerInstance.SelectApple(colliding);
+                appleManager.SelectApple(colliding);
             }
         }
 

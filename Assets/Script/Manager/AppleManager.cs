@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class AppleManager : MonoBehaviour
 {
+    public static AppleManager Instance { get; private set; }
+
     private List<Apple> Apples = new List<Apple>();
     public List<Sprite> AppleSprite = new List<Sprite>();
     public GameObject ApplePrefab;
@@ -14,6 +16,17 @@ public class AppleManager : MonoBehaviour
 
     public int AppleGridSize = 7;
     private int _leftApples = 0;
+
+    private void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        Instance = this;
+    }
 
     public void CreateApples()
     {
@@ -64,11 +77,10 @@ public class AppleManager : MonoBehaviour
         GameObject apple = Instantiate(ApplePrefab, Vector3.zero, Quaternion.identity, transform);
         Apple comp = apple.GetComponent<Apple>();
         comp.coord = new Vector2(x, y);
-        comp.number = number;
-        comp.
+        comp.Number = number;
 
         // Apple로 넘기기
-        apple.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = AppleSprite[comp.number - 1];
+
         return comp;
     }
 
@@ -115,7 +127,7 @@ public class AppleManager : MonoBehaviour
         {
             if (apple != null)
             {
-                numbers.Add(apple.number);
+                numbers.Add(apple.Number);
             }
         }
 
@@ -138,8 +150,8 @@ public class AppleManager : MonoBehaviour
         {
             if (Apples[i] != null)
             {
-                Apples[i].number = numbers[k];
-                Apples[i].transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = AppleSprite[numbers[k] - 1];
+
+                Apples[i].Number = numbers[k];
                 k++;
             }
         }
@@ -150,7 +162,7 @@ public class AppleManager : MonoBehaviour
         int sum = 0;
         foreach (var apple in Apples)
         {
-            sum += apple.number;
+            sum += apple.Number;
         }
         return sum;
     }
