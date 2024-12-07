@@ -51,17 +51,25 @@ public class AppleManager : MonoBehaviour
             for (int j = 0; j < AppleGridSize; j++)
             {
                 //number 추후에 합 10이 되게
-                GameObject apple = Instantiate(ApplePrefab, Vector3.zero, Quaternion.identity, transform);
-                Apple comp = apple.GetComponent<Apple>();
-                comp.coord = new Vector2(i, j);
-                comp.number = appleNumbers[k];
+                Apple apple = CreateApple(appleNumbers[k], i, j);
                 k++;
-                // Apple로 넘기기
-                apple.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = AppleSprite[comp.number - 1];
-                Apples.Add(comp);
+                Apples.Add(apple);
             }
         }
         _leftApples = AppleGridSize * AppleGridSize;
+    }
+
+    private Apple CreateApple(int number, int x, int y)
+    {
+        GameObject apple = Instantiate(ApplePrefab, Vector3.zero, Quaternion.identity, transform);
+        Apple comp = apple.GetComponent<Apple>();
+        comp.coord = new Vector2(x, y);
+        comp.number = number;
+        comp.
+
+        // Apple로 넘기기
+        apple.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = AppleSprite[comp.number - 1];
+        return comp;
     }
 
     public void SelectApple(Apple apple)
