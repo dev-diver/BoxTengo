@@ -115,7 +115,7 @@ public class DrawSelection : MonoBehaviour
         lineRend.positionCount = 0;
         colliderPoints.Clear();
         ApplyCollider();
-        AppleManagerInstance.ClearSelected();
+        AppleManagerInstance.UnSelectAllApples();
     }
 
     private void CheckOverlap()
@@ -148,7 +148,7 @@ public class DrawSelection : MonoBehaviour
 
         foreach (var apple in unselectedApples)
         {
-            apple.Unselect();
+            AppleManagerInstance.UnSelectApple(apple);
         }
 
         // 추가 경우
@@ -156,7 +156,7 @@ public class DrawSelection : MonoBehaviour
         {
             if (!AppleManagerInstance.SelectedApples.Contains(colliding))
             {
-                colliding.Select();
+                AppleManagerInstance.SelectApple(colliding);
             }
         }
 

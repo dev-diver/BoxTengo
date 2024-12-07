@@ -24,24 +24,21 @@ public class Apple : MonoBehaviour
         transform.localScale = new Vector2(localAppleScale, localAppleScale);
     }
     // Update is called once per frame
-    public void Select()
+    public void Selected()
     {
         animator.SetBool("selected", true);
         appleAudio.playSound("SELECTED");
-        appleManager.SelectedApples.Add(gameObject.GetComponent<Apple>());
     }
 
-    public void Unselect()
+    public void Unselected()
     {
         animator?.SetBool("selected", false);
-        appleManager.SelectedApples.Remove(gameObject.GetComponent<Apple>());
     }
 
     public void BoxingOut()
     {
-        Debug.Log("BoxingOut");
+        //collider만 제거하고 Destroy는 AllClear시 실행
         Destroy(GetComponent<CircleCollider2D>());
-        appleManager.Apples.Remove(gameObject.GetComponent<Apple>());
         appleAudio.playSound("REMOVE");
         animator?.SetTrigger("disappear");
     }

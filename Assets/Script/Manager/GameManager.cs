@@ -264,7 +264,7 @@ public class GameManager : MonoBehaviour
     public void newBlocks()
     {
         //appleReset
-        appleManager.ClearApples();
+        appleManager.ClearAllApples();
         appleManager.CreateApples();
         appleManager.ShuffleApples();
     }

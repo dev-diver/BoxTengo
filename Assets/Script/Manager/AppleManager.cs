@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class AppleManager : MonoBehaviour
 {
-    public List<Apple> Apples = new List<Apple>();
+    private List<Apple> Apples = new List<Apple>();
     public List<Sprite> AppleSprite = new List<Sprite>();
     public GameObject ApplePrefab;
 
@@ -64,19 +64,31 @@ public class AppleManager : MonoBehaviour
         _leftApples = AppleGridSize * AppleGridSize;
     }
 
-    public void ClearSelected()
+    public void SelectApple(Apple apple)
+    {
+        apple?.Selected();
+        SelectedApples.Add(apple);
+    }
+
+    public void UnSelectApple(Apple apple)
+    {
+        apple?.Unselected();
+        SelectedApples.Remove(apple);
+    }
+
+    public void UnSelectAllApples()
     {
 
         var unselectedApples = SelectedApples.ToList();
 
         foreach (var apple in unselectedApples)
         {
-            apple?.Unselect();
+            apple?.Unselected();
         }
-        //selectedApples.Clear();
+        SelectedApples.Clear();
     }
 
-    public void ClearApples()
+    public void ClearAllApples()
     {
         for (int i = 0; i < Apples.Count; i++)
         {
@@ -143,6 +155,7 @@ public class AppleManager : MonoBehaviour
             foreach (var apple in SelectedApples)
             {
                 apple?.BoxingOut();
+                Apples.Remove(apple);
             }
 
             _leftApples -= SelectedApples.Count;
@@ -156,5 +169,7 @@ public class AppleManager : MonoBehaviour
             }
         }
     }
+
+
 
 }
