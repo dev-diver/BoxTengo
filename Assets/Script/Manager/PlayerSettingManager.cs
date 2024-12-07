@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 public class PlayerSettingManager : MonoBehaviour
@@ -7,26 +5,27 @@ public class PlayerSettingManager : MonoBehaviour
     public static PlayerSettingManager Instance;
     [SerializeField] GameObject popup_setting;
     [SerializeField] Toggle AutoRecordToggle;
-    
+
     public bool recordOn;
-    private void Awake() {
-        if(Instance !=null)
-		{
-			Destroy(gameObject); //새로 생긴걸 파괴
-			return;
-		}
-		Instance = this; //this는 현재 Instance를 가리킴.
-		DontDestroyOnLoad(gameObject);
+    private void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject); //새로 생긴걸 파괴
+            return;
+        }
+        Instance = this; //this는 현재 Instance를 가리킴.
+        DontDestroyOnLoad(gameObject);
         DontDestroyOnLoad(popup_setting);
     }
 
-    void Start() 
+    void Start()
     {
         setPlayerToggle();
     }
 
     void setPlayerToggle()
-    {   
+    {
         AutoRecordToggle.isOn = getPlayerAutoRecordOpt() && GPGSManager.Instance.login;
         recordOn = AutoRecordToggle.isOn;
     }
@@ -36,11 +35,12 @@ public class PlayerSettingManager : MonoBehaviour
         return PlayerPrefs.GetInt("AutoRecord", 1) != 0;
     }
 
-    public void ChangedAutoRecordToggle(bool change){
-        if(change)
+    public void ChangedAutoRecordToggle(bool change)
+    {
+        if (change)
         {
             GPGSManager.Instance.Login();
-            if(GPGSManager.Instance.login)
+            if (GPGSManager.Instance.login)
             {
                 setRecordPrefs(change);
             }
@@ -57,7 +57,7 @@ public class PlayerSettingManager : MonoBehaviour
 
     void setRecordPrefs(bool record)
     {
-        PlayerPrefs.SetInt("AutoRecord", record ? 1 :0);
+        PlayerPrefs.SetInt("AutoRecord", record ? 1 : 0);
         recordOn = record;
     }
 }
