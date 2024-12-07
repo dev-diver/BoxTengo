@@ -1,10 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public static class StageReader
 {
-    
+
     public static StageInfo LoadStage(int nStage)
     {
         Debug.Log($"Load Stage : Stage/{GetFileName(nStage)}");

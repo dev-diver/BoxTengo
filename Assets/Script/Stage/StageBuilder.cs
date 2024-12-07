@@ -1,31 +1,32 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+
 public class StageBuilder
 {
     int m_nStage;
     StageInfo m_StageInfo;
-    public StageBuilder(int nStage){
+    public StageBuilder(int nStage)
+    {
         m_nStage = nStage;
     }
 
-    public Stage ComposeStage(){
+    public Stage ComposeStage()
+    {
 
         Debug.Assert(m_nStage > 0, $"Invalide Stage : {m_nStage}");
- 
+
         //0. 스테이지 정보를 로드한다.(보드 크기, Cell/블럭 정보 등)
         m_StageInfo = LoadStage(m_nStage);
- 
+
         //1. Stage 객체를 생성한다.
         Stage stage = new Stage(this, m_StageInfo.row, m_StageInfo.col);
 
         //2. Cell,Block 초기 값을 생성한다.
-        for(int nRow = 0; nRow < m_StageInfo.row; nRow++)
+        for (int nRow = 0; nRow < m_StageInfo.row; nRow++)
         {
             for (int nCol = 0; nCol < m_StageInfo.col; nCol++)
             {
                 stage.blocks[nRow, nCol] = SpawnBlockForStage(nRow, nCol);
-                stage.cells[nRow,nCol] = SpawnCellForStage(nRow, nCol);
+                stage.cells[nRow, nCol] = SpawnCellForStage(nRow, nCol);
             }
         }
 
@@ -39,7 +40,7 @@ public class StageBuilder
         {
             Debug.Log(stageInfo.ToString());
         }
- 
+
         return stageInfo;
     }
 
@@ -58,7 +59,7 @@ public class StageBuilder
         //data에서 가져오기
         Debug.Assert(m_StageInfo != null);
         Debug.Assert(nRow < m_StageInfo.row && nCol < m_StageInfo.col);
- 
+
         return CellFactory.SpawnCell(m_StageInfo, nRow, nCol);
     }
 
@@ -76,9 +77,9 @@ public class StageBuilder
     }
 
     public Block SpawnEmptyBlock()
-        {
-            Block newBlock = BlockFactory.SpawnBlock(BlockType.EMPTY, 0);
+    {
+        Block newBlock = BlockFactory.SpawnBlock(BlockType.EMPTY, 0);
 
-            return newBlock;
-        }
+        return newBlock;
+    }
 }
