@@ -10,8 +10,6 @@ public class DrawSelection : MonoBehaviour
     private LineRenderer lineRend;
     private List<Vector2> colliderPoints = new List<Vector2>(4);
     private PolygonCollider2D colliderShape;
-    private List<Collider2D> beforeCollider;
-    public GameManager GameManagerInstance;
     private AppleManager appleManager;
 
     private void OnEnable()

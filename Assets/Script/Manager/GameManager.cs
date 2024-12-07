@@ -91,6 +91,19 @@ public class GameManager : MonoBehaviour
 
     [Tooltip("Choose setting")]
     [SerializeField] GameConfig GameSettings;
+
+    public static GameManager Instance { get; private set; }
+    private void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        Instance = this;
+    }
+
     void Start()
     {
         appleManager = AppleManager.Instance;

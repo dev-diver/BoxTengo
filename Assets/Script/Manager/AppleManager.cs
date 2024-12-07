@@ -4,19 +4,19 @@ using UnityEngine;
 
 public class AppleManager : MonoBehaviour
 {
-    public static AppleManager Instance { get; private set; }
 
     private List<Apple> Apples = new List<Apple>();
     public List<Sprite> AppleSprite = new List<Sprite>();
     public GameObject ApplePrefab;
 
     public HashSet<Apple> SelectedApples = new HashSet<Apple>();
-    [SerializeField] GameManager gameManager;
+    private GameManager gameManager;
     [SerializeField] ComboManager comboManager;
 
     public int AppleGridSize = 7;
     private int _leftApples = 0;
 
+    public static AppleManager Instance { get; private set; }
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -26,6 +26,11 @@ public class AppleManager : MonoBehaviour
         }
 
         Instance = this;
+    }
+
+    void Start()
+    {
+        gameManager = GameManager.Instance;
     }
 
     public void CreateApples()
