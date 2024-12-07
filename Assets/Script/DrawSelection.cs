@@ -1,6 +1,7 @@
 using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
+// using System.Diagnostics;
 
 public class DrawSelection : MonoBehaviour
 {
@@ -120,6 +121,9 @@ public class DrawSelection : MonoBehaviour
     private void CheckOverlap()
     {
 
+        // Stopwatch stopwatch = new Stopwatch();
+        // stopwatch.Start();
+
         List<Collider2D> colliders = new List<Collider2D>();
         colliderShape.OverlapCollider(new ContactFilter2D(), colliders);
 
@@ -155,6 +159,12 @@ public class DrawSelection : MonoBehaviour
                 colliding.Select();
             }
         }
+
+        // stopwatch.Stop();
+
+        // 실행 시간 로그 출력
+        // UnityEngine.Debug.Log($"Execution Time: {stopwatch.Elapsed.TotalMilliseconds:F6} ms");
+        // UnityEngine.Debug.Log($"Execution Time: {stopwatch.ElapsedTicks} ticks");
 
     }
 }
