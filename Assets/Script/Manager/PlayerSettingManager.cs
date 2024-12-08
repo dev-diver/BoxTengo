@@ -16,7 +16,6 @@ public class PlayerSettingManager : MonoBehaviour
         }
         Instance = this; //this는 현재 Instance를 가리킴.
         DontDestroyOnLoad(gameObject);
-        DontDestroyOnLoad(popup_setting);
     }
 
     void Start()

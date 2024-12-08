@@ -14,7 +14,6 @@ public class Apple : MonoBehaviour
         } // setter
     }
 
-    private AppleManager appleManager;
     private Animator animator;
     private AppleSound appleAudio;
     void Start()
