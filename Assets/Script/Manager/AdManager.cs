@@ -84,7 +84,6 @@ public class AdManager : MonoBehaviour
         {
             this.interAds.Add(entry.Key, new InterstitialAd(entry.Value));
         }
-
     }
 
     RewardedAd CreateRewardedAd(string adUnitName)
@@ -92,18 +91,12 @@ public class AdManager : MonoBehaviour
         string Id = this.adUnitIds[adUnitName];
         RewardedAd Ad = new RewardedAd(Id);
         //핸들러
-        // Called when an ad request has successfully loaded.
-        Ad.OnAdLoaded += delegate (object sender, EventArgs args) { HandleRewardedAdLoaded(sender, args, adUnitName); };
-        // Called when an ad request failed to load.
-        Ad.OnAdFailedToLoad += delegate (object sender, AdFailedToLoadEventArgs args) { HandleRewardedAdFailedToLoad(sender, args, adUnitName); };
-        // Called when an ad is shown.
+        Ad.OnAdLoaded += (_, _) => { HandleRewardedAdLoaded(adUnitName); };
+        Ad.OnAdFailedToLoad += (_, args) => { HandleRewardedAdFailedToLoad(args, adUnitName); };
         Ad.OnAdOpening += HandleRewardedAdOpening;
-        // Called when an ad request failed to show.
         Ad.OnAdFailedToShow += HandleRewardedAdFailedToShow;
-        // Called when the user should be rewarded for interacting with the ad.
-        Ad.OnUserEarnedReward += delegate (object sender, Reward args) { HandleUserEarnedReward(sender, args, adUnitName); };
-        // Called when the ad is closed.
-        Ad.OnAdClosed += delegate (object sender, EventArgs e) { HandleRewardedAdClosed(adUnitName); };
+        Ad.OnUserEarnedReward += (_, args) => { HandleUserEarnedReward(args, adUnitName); };
+        Ad.OnAdClosed += (_, _) => { HandleRewardedAdClosed(adUnitName); };
         return Ad;
     }
 
@@ -112,11 +105,9 @@ public class AdManager : MonoBehaviour
         string Id = this.adInterUnitIds[adUnitName];
         InterstitialAd Ad = new InterstitialAd(Id);
         Ad.OnAdLoaded += HandleOnAdLoaded;
-        // Called when an ad request failed to load.
         Ad.OnAdFailedToLoad += HandleOnAdFailedToLoad;
-        // Called when an ad is shown.
         Ad.OnAdOpening += HandleOnAdOpening;
-        Ad.OnAdClosed += delegate (object sender, EventArgs e) { HandleOnAdClosed(adUnitName); };
+        Ad.OnAdClosed += (_, _) => { HandleOnAdClosed(adUnitName); };
         return Ad;
     }
 
@@ -133,6 +124,7 @@ public class AdManager : MonoBehaviour
         AdRequest request = new AdRequest.Builder().Build();
         Ad.LoadAd(request);
     }
+
     public RewardedAd CreateAndLoadRewardedAd(string adUnitName)
     {
         RewardedAd Ad = CreateRewardedAd(adUnitName);
@@ -151,13 +143,13 @@ public class AdManager : MonoBehaviour
 
     //Reward Handler
 
-    public void HandleRewardedAdLoaded(object sender, EventArgs args, string name)
+    public void HandleRewardedAdLoaded(string name)
     {
         print("HandleRewardedAdLoaded event received");
         this.rewardRequestCount[name] = 0;
     }
 
-    public void HandleRewardedAdFailedToLoad(object sender, AdFailedToLoadEventArgs args, string name)
+    public void HandleRewardedAdFailedToLoad(AdFailedToLoadEventArgs args, string name)
     {
         print("HandleRewardedAdFailedToLoad event received with message: " + args.ToString());
 
@@ -204,7 +196,7 @@ public class AdManager : MonoBehaviour
         this.rewardedAds[adUnitName] = CreateAndLoadRewardedAd(adUnitName);
     }
 
-    public void HandleUserEarnedReward(object sender, Reward args, string name)
+    public void HandleUserEarnedReward(Reward args, string name)
     {
         string type = args.Type;
         double amount = args.Amount;
