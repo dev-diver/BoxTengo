@@ -24,6 +24,11 @@ public class RewardManager : MonoBehaviour
         coin = PlayerPrefs.GetInt("coin", 0);
     }
 
+    void Start()
+    {
+        gameManager = GameManager.Instance;
+    }
+
     private void Cal()
     {
         DateTime StartDate = DateTime.Now;
@@ -34,14 +39,12 @@ public class RewardManager : MonoBehaviour
 
     public void continueGame()
     {
-        gameManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
         this.addCoin(1);
         gameManager.ContinueGame();
     }
 
     public void coinGameStart()
     {
-        gameManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
         this.addCoin(1);
         gameManager.coinGameStart();
     }
