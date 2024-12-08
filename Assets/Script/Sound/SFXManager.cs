@@ -30,43 +30,49 @@ public class SFXManager : MonoBehaviour
 
     public void PlaySound(string action)
     {
+
+        AudioClip clipToPlay = null;
         switch (action)
         {
             case "CLICK":
-                audioSource.clip = Aud_buttonClick;
+                clipToPlay = Aud_buttonClick;
                 break;
             case "SELECTED":
-                audioSource.clip = Aud_Selected;
+                clipToPlay = Aud_Selected;
                 break;
             case "BOXING":
-                audioSource.clip = Aud_BoxingOut;
+                clipToPlay = Aud_BoxingOut;
                 break;
             case "COMBO":
-                audioSource.clip = Aud_Combo;
+                clipToPlay = Aud_Combo;
                 break;
             case "CLEAR":
-                audioSource.clip = Aud_Clear;
+                clipToPlay = Aud_Clear;
                 break;
             case "PRECOUNT":
-                audioSource.clip = Aud_preCount;
+                clipToPlay = Aud_preCount;
                 break;
             case "COUNT":
-                audioSource.clip = Aud_Count;
+                clipToPlay = Aud_Count;
                 break;
             case "GAMESTART":
-                audioSource.clip = Aud_gameStart;
+                clipToPlay = Aud_gameStart;
                 break;
             case "GAMEOVER":
-                audioSource.clip = Aud_gameOver;
+                clipToPlay = Aud_gameOver;
                 break;
             case "GAMECONTINUE":
-                audioSource.clip = Aud_gameContinue;
+                clipToPlay = Aud_gameContinue;
                 break;
             case "HIGHSCORE":
-                audioSource.clip = Aud_highScore;
+                clipToPlay = Aud_highScore;
                 break;
         }
-        audioSource.PlayOneShot(audioSource.clip);
+
+        if (clipToPlay != null)
+        {
+            audioSource.PlayOneShot(clipToPlay);
+        }
     }
 
     void GameOver()

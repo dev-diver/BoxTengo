@@ -11,14 +11,17 @@ public class MixerController : MonoBehaviour
     [SerializeField] string groupName;
 
     float beforeVolume = 0;
-    void Awake() {
+    void Awake()
+    {
         setToSavedVolume();
     }
-    public void setToSavedVolume() {
+    public void setToSavedVolume()
+    {
         audioSlider.value = getSavedVolume();
     }
-    public float getSavedVolume() {
-        return PlayerPrefs.GetFloat(groupName+"Volume", 1);
+    public float getSavedVolume()
+    {
+        return PlayerPrefs.GetFloat(groupName + "Volume", 1);
     }
 
     public void OnChangedValue()
@@ -27,14 +30,15 @@ public class MixerController : MonoBehaviour
     }
     public void ToggleValueChanged(bool change)
     {
-        if(toggle.isOn)
+        if (toggle.isOn)
         {
-            if(beforeVolume != audioSlider.minValue)
+            if (beforeVolume != audioSlider.minValue)
             {
                 audioSlider.value = beforeVolume;
             }
         }
-        else{
+        else
+        {
             beforeVolume = audioSlider.value;
             audioSlider.value = audioSlider.minValue;
         }
@@ -42,17 +46,20 @@ public class MixerController : MonoBehaviour
 
     void setVolume(float value)
     {
-        PlayerPrefs.SetFloat(groupName+"Volume", value);
-        audioMixer.SetFloat(groupName, Mathf.Log10(value)*20);
-        if(value == audioSlider.minValue)
+        PlayerPrefs.SetFloat(groupName + "Volume", value);
+        audioMixer.SetFloat(groupName + "Volume", Mathf.Log10(value) * 20);
+        if (value == audioSlider.minValue)
         {
             toggle.isOn = false;
-        }else{
+        }
+        else
+        {
             toggle.isOn = true;
         }
     }
 
-    public void OnPointerUp(BaseEventData eventData){
+    public void OnPointerUp(BaseEventData eventData)
+    {
         SFXManager.Instance.PlaySound("CLICK");
     }
 }
